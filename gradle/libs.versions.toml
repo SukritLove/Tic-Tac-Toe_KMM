@@ -24,6 +24,7 @@ jetbrains-kotlinxCoroutinesCore = "1.8.0-RC2"
 kotlinxDatetime = "0.5.0"
 voyagerNavigator = "1.1.0-alpha03"
 voyagerScreenmodel = "1.1.0-alpha03"
+material3Android = "1.2.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -49,6 +50,7 @@ jetbrains-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "k
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 cafe-voyager-navigator = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "voyagerNavigator" }
 voyager-screenmodel = { group = "cafe.adriel.voyager", name = "voyager-screenmodel", version.ref = "voyagerScreenmodel" }
+androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 
 
 [plugins]

@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.sqlDelight.plugin)
+    alias(libs.plugins.kotlinX.serialization.plugin)
 }
 
 kotlin {
@@ -31,6 +33,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+
+            // ----- SQLDelight [DataBase] -----
+            implementation(libs.android.driver)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -39,6 +44,30 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
+
+            // ----- MVVM [ViewModel] -----
+            implementation(libs.mvvm.compose)
+            implementation(libs.mvvm.flow.compose)
+            implementation(libs.mvvm.livedata.compose)
+
+            // ----- Voyager [Navigation] -----
+            implementation(libs.cafe.voyager.navigator)
+            implementation(libs.voyager.screenmodel)
+
+            // ----- SQLDelight [DataBase] -----
+            implementation(libs.sqlite.runtime)
+            implementation(libs.coroutines.extensions)
+            implementation(libs.jetbrains.kotlinx.coroutines.core)
+
+            // ----- Kotlinx-Datetime [Date & Time] -----
+            implementation(libs.kotlinx.datetime)
+        }
+
+        iosMain.dependencies {
+
+            // ----- SQLDelight [DataBase] -----
+            implementation(libs.native.driver)
         }
     }
 }
@@ -75,5 +104,7 @@ android {
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
+}
+dependencies {
 }
 

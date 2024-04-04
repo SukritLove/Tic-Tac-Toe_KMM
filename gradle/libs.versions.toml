@@ -14,6 +14,16 @@ compose = "1.6.2"
 compose-plugin = "1.6.0"
 junit = "4.13.2"
 kotlin = "1.9.22"
+mvvmCompose = "0.16.1"
+mvvmFlowCompose = "0.16.1"
+mvvmLivedataCompose = "0.16.1"
+androidDriver = "2.0.1"
+nativeDriver = "2.0.1"
+sqlDelight = "2.0.1"
+jetbrains-kotlinxCoroutinesCore = "1.8.0-RC2"
+kotlinxDatetime = "0.5.0"
+voyagerNavigator = "1.1.0-alpha03"
+voyagerScreenmodel = "1.1.0-alpha03"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -28,9 +38,23 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+mvvm-compose = { group = "dev.icerock.moko", name = "mvvm-compose", version.ref = "mvvmCompose" }
+mvvm-flow-compose = { group = "dev.icerock.moko", name = "mvvm-flow-compose", version.ref = "mvvmFlowCompose" }
+mvvm-livedata-compose = { group = "dev.icerock.moko", name = "mvvm-livedata-compose", version.ref = "mvvmLivedataCompose" }
+android-driver = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "androidDriver" }
+native-driver = { group = "app.cash.sqldelight", name = "native-driver", version.ref = "nativeDriver" }
+sqlite-runtime = { group = "app.cash.sqldelight", name = "runtime", version = "sqlDelight" }
+coroutines-extensions = { group = "app.cash.sqldelight", name = "coroutines-extensions", version = "2.0.1" }
+jetbrains-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "jetbrains-kotlinxCoroutinesCore" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+cafe-voyager-navigator = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "voyagerNavigator" }
+voyager-screenmodel = { group = "cafe.adriel.voyager", name = "voyager-screenmodel", version.ref = "voyagerScreenmodel" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+sqlDelight-plugin = { id = "app.cash.sqldelight", version.ref = "sqlDelight" }
+kotlinX-serialization-plugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

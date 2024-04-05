@@ -13,17 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import tic_tac_toe_kmm.composeapp.generated.resources.Res
@@ -35,8 +30,6 @@ import ui.screen.playscreen.Player
 fun TicTacToeGrid(boxModifier: Modifier, viewModel: PlayViewModel) {
 
     val grid = viewModel.getGridSize()
-
-
 
     BoxWithConstraints(
         modifier = boxModifier,
@@ -86,7 +79,7 @@ fun TicTacToeCellGroup(viewModel: PlayViewModel) {
     val gridState = viewModel.grid.observeAsState()
 
     Column {
-        gridState.value?.forEachIndexed { rowIndex, row ->
+        gridState.value.forEachIndexed { rowIndex, row ->
             Row {
                 row.forEachIndexed { colIndex, cell ->
                     Box(
@@ -119,7 +112,6 @@ fun TicTacToeCell(cell: Player?) {
             contentDescription = "O",
             modifier = Modifier.aspectRatio(1f / 2f)
         )
-
         null -> {}
     }
 }

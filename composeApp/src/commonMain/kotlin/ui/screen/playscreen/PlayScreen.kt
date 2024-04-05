@@ -3,17 +3,23 @@ package ui.screen.playscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.screen.Screen
 import com.example.compose.AppColor
+import dev.icerock.moko.mvvm.livedata.compose.observeAsState
 import ui.component.TicTacToeGrid
 
 class PlayScreen : Screen {
@@ -22,6 +28,9 @@ class PlayScreen : Screen {
     @Composable
     override fun Content() {
 
+        val currentPlayer = viewModel.currentPlayer.observeAsState()
+        val winner = viewModel.winner.observeAsState()
+        val onDismiss = mutableStateOf(winner.value != null)
         Column(
             modifier = Modifier.fillMaxSize().background(AppColor.background).padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -31,6 +40,12 @@ class PlayScreen : Screen {
                 boxModifier = Modifier.weight(1f).aspectRatio(1f),
                 viewModel
             )
+            if (onDismiss.value) {
+                Dialog(onDismissRequest = { onDismiss.value = false }) {
+                    Box(Modifier.size(100.dp).background(Color.White)) { Text(winner.value!!) }
+                }
+            }
+            Text("Player ${currentPlayer.value.name}")
         }
 
     }

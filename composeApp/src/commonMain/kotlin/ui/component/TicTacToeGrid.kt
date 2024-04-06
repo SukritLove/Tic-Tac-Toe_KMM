@@ -22,14 +22,14 @@ import dev.icerock.moko.mvvm.livedata.compose.observeAsState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import tic_tac_toe_kmm.composeapp.generated.resources.Res
+import ui.model.Player
 import ui.screen.playscreen.PlayViewModel
-import ui.screen.playscreen.Player
 
 
 @Composable
 fun TicTacToeGrid(boxModifier: Modifier, viewModel: PlayViewModel) {
 
-    val grid = viewModel.getGridSize()
+    val grid = viewModel.gridSize
 
     BoxWithConstraints(
         modifier = boxModifier,

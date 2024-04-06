@@ -21,6 +21,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.example.compose.AppColor
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
 import ui.component.TicTacToeGrid
+import ui.model.DialogueState
 
 class PlayScreen : Screen {
     private val viewModel = PlayViewModel()
@@ -29,8 +30,8 @@ class PlayScreen : Screen {
     override fun Content() {
 
         val currentPlayer = viewModel.currentPlayer.observeAsState()
-        val winner = viewModel.winner.observeAsState()
-        val onDismiss = mutableStateOf(winner.value != null)
+        val dialogueStatus = viewModel.dialogueStatus.observeAsState()
+        val dialogueMessage = viewModel.dialogueMessage.observeAsState()
         Column(
             modifier = Modifier.fillMaxSize().background(AppColor.background).padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -40,9 +41,11 @@ class PlayScreen : Screen {
                 boxModifier = Modifier.weight(1f).aspectRatio(1f),
                 viewModel
             )
-            if (onDismiss.value) {
-                Dialog(onDismissRequest = { onDismiss.value = false }) {
-                    Box(Modifier.size(100.dp).background(Color.White)) { Text(winner.value!!) }
+            if (dialogueStatus.value == DialogueState.OnWin || dialogueStatus.value == DialogueState.OnTie) {
+                Dialog(onDismissRequest = { viewModel.setDialogue(DialogueState.OnDismiss) }) {
+                    Box(
+                        Modifier.size(100.dp).background(Color.White)
+                    ) { Text("${dialogueMessage.value}") }
                 }
             }
             Text("Player ${currentPlayer.value.name}")

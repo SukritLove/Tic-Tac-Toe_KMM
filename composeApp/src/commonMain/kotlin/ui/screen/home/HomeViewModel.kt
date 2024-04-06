@@ -1,8 +1,8 @@
 package ui.screen.home
 
 import cafe.adriel.voyager.navigator.Navigator
-import data.DataRepo
-import data.DataRepository
+import data.dataRepository.DataRepo
+import data.dataRepository.DataRepository
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

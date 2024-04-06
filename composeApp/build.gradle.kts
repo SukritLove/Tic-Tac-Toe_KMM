@@ -33,7 +33,6 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-
             // ----- SQLDelight [DataBase] -----
             implementation(libs.android.driver)
         }
@@ -44,7 +43,6 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-
 
             // ----- MVVM [ViewModel] -----
             implementation(libs.mvvm.compose)
@@ -65,9 +63,16 @@ kotlin {
         }
 
         iosMain.dependencies {
-
             // ----- SQLDelight [DataBase] -----
             implementation(libs.native.driver)
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("GameHistoryDatabase") {
+            packageName.set("com.database.gameplay.history")
         }
     }
 }

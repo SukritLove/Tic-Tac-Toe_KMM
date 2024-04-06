@@ -1,0 +1,15 @@
+CREATE TABLE GameHistory (
+    game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    winner TEXT,
+    end_time TEXT
+);
+
+selectAllGames:
+SELECT * FROM GameHistory;
+
+insertHistory:
+INSERT INTO GameHistory(winner, end_time)
+VALUES (?, ?);
+
+deleteHistory:
+DELETE FROM GameHistory;

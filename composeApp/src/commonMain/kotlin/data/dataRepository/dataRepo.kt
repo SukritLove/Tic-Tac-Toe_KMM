@@ -1,4 +1,4 @@
-package data
+package data.dataRepository
 
 data class DataRepository(
     val gridSize: Int

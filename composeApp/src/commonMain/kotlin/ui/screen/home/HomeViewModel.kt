@@ -7,6 +7,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import ui.screen.history.HistoryScreen
 import ui.screen.playscreen.PlayScreen
 
 class HomeViewModel : ViewModel() {
@@ -31,6 +32,10 @@ class HomeViewModel : ViewModel() {
     fun onClickPlay(navigator: Navigator) {
         DataRepo.data = DataRepository(gridSize = gridSize.value)
         navigator.push(PlayScreen())
+    }
+
+    fun onClickHistory(navigator: Navigator) {
+        navigator.push(HistoryScreen())
     }
 
 }

@@ -2,7 +2,7 @@ package shared.data
 
 import com.database.gameplay.history.GameHistoryDatabase
 import data.domain.DataSource
-import data.domain.SQLDelightDatasource
+import data.database.SQLDelightDatasource
 
 actual class DataSourceModule(
 ) {

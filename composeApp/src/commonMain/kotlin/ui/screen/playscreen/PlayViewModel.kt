@@ -1,6 +1,7 @@
 package ui.screen.playscreen
 
 import data.dataRepository.DataRepo
+import data.database.DatabaseManagement
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
@@ -10,6 +11,8 @@ import ui.model.Player
 
 
 class PlayViewModel : ViewModel() {
+
+    private val dataManagement = DatabaseManagement()
     val gridSize = DataRepo.data.gridSize
 
     private val _grid: MutableLiveData<List<MutableList<MutableStateFlow<Player?>>>> =
@@ -60,8 +63,15 @@ class PlayViewModel : ViewModel() {
             DialogueState.OnWin, DialogueState.OnTie -> {
                 _dialogueStatus.value = state
                 when (state) {
-                    DialogueState.OnWin -> _dialogueMessage.value = message
-                    DialogueState.OnTie -> _dialogueMessage.value = "This Game are tie"
+                    DialogueState.OnWin -> {
+                        dataManagement.addHistory(winner = message, end_time = "11")
+                        _dialogueMessage.value = message
+                    }
+
+                    DialogueState.OnTie -> {
+                        dataManagement.addHistory(winner = "TIE", end_time = "11")
+                        _dialogueMessage.value = "This Game are tie"
+                    }
                     else -> {}
                 }
             }

@@ -3,7 +3,7 @@ package shared.data
 import android.content.Context
 import com.database.gameplay.history.GameHistoryDatabase
 import data.domain.DataSource
-import data.domain.SQLDelightDatasource
+import data.database.SQLDelightDatasource
 
 actual class DataSourceModule(
     private val context: Context

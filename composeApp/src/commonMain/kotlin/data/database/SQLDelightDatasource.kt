@@ -1,8 +1,11 @@
-package data.domain
+package data.database
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.database.gameplay.history.GameHistoryDatabase
+import data.domain.DataSource
+import data.domain.HistoryData
+import data.domain.toHistory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow

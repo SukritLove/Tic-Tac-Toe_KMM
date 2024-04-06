@@ -67,7 +67,7 @@ class HomeScreen : Screen {
             Button(onClick = { viewModel.onClickPlay(navigator) }) {
                 Text("Play")
             }
-            Button(onClick = { }) {
+            Button(onClick = { viewModel.onClickHistory(navigator) }) {
                 Text("History")
             }
             Button(onClick = { }) {

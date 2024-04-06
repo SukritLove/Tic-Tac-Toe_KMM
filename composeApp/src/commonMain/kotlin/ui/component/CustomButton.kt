@@ -34,7 +34,6 @@ object CustomButton {
 
     @Composable
     fun addRemove(btnText: String, onButtonClick: () -> Unit) {
-        var buttonColor by remember { mutableStateOf(Color.Gray) }
 
         ElevatedButton(
             onClick = onButtonClick,

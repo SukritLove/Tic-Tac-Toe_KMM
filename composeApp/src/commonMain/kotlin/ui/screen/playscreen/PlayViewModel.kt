@@ -39,7 +39,7 @@ class PlayViewModel : ViewModel() {
 
     private val lastWinner = MutableStateFlow<Player?>(null)
 
-    suspend fun playTurn(row: Int? = 0, col: Int? = 0) {
+    fun playTurn(row: Int? = 0, col: Int? = 0) {
         val currentGrid = _grid.value.map { it.toMutableList() }
         if (currentGrid[row!!][col!!].value == null && _dialogueStatus.value == DialogueState.OnDefault) {
             currentGrid[row][col].value = _currentPlayer.value
@@ -65,27 +65,30 @@ class PlayViewModel : ViewModel() {
                         setDialogue(state = status, whoTurn = _currentPlayer.value)
                         //startNewGame()
                     } else {
+
                         _currentPlayer.value =
                             when (_currentPlayer.value) {
                                 Player.X -> Player.O
                                 Player.O -> Player.X
                                 else -> Player.X
                             }
-
                         println("who play ->  ${_currentPlayer.value}")
                         if (_currentPlayer.value == Player.O) { // Assuming the player X just played, and now it's AI's turn
+
                             val aiMove = findBestMove(currentGrid)
+                            println(aiMove)
                             if (aiMove != Pair(-1, -1)) {
                                 // Apply AI's best move
+                                println("calculating")
                                 playTurn(aiMove.first, aiMove.second)
                                 // Note: Ensure playTurn can handle AI moves without causing recursion or incorrect state transitions
                             }
-
 
                             _grid.value = currentGrid
                         } else {
                             _grid.value = currentGrid
                         }
+
                     }
 
                 }
@@ -94,7 +97,7 @@ class PlayViewModel : ViewModel() {
     }
 
 
-    private fun minimax(
+    fun minimax(
         grid: List<MutableList<MutableStateFlow<Player?>>>,
         depth: Int,
         isMaximizing: Boolean
@@ -103,7 +106,8 @@ class PlayViewModel : ViewModel() {
         when (currentStatus) {
             DialogueState.OnWin -> return if (isMaximizing) -10 else 10
             DialogueState.OnTie -> return 0
-            else -> {}
+            else -> { /* Continue with the minimax algorithm */
+            }
         }
 
         if (isMaximizing) {
@@ -154,7 +158,7 @@ class PlayViewModel : ViewModel() {
         return move
     }
 
-    suspend fun setDialogue(state: DialogueState, whoTurn: Player = Player.NULL) {
+    fun setDialogue(state: DialogueState, whoTurn: Player = Player.NULL) {
         when (state) {
             DialogueState.OnDefault, DialogueState.OnDismiss -> {
                 startNewGame()
@@ -225,20 +229,18 @@ class PlayViewModel : ViewModel() {
         return grid.all { row -> row.all { cell -> cell.value != null } }
     }
 
-    private suspend fun startNewGame() {
+    private fun startNewGame() {
         _grid.value = List(gridSize) {
             MutableList(gridSize) {
                 MutableStateFlow<Player?>(null)
             }
         }
         _currentPlayer.value = lastWinner.value ?: Player.X
-
-        println("calculating")
+        _dialogueStatus.value = DialogueState.OnDefault
         if (gameMode == GameMode.AI) {
             playTurn()
         }
 
-        _dialogueStatus.value = DialogueState.OnDefault
         lastWinner.value = null
     }
 

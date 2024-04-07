@@ -14,11 +14,12 @@ class PlayViewModel : ViewModel() {
 
     private val dataManagement = DatabaseManagement()
     val gridSize = DataRepo.data.gridSize
+    val gameMode = DataRepo.data.gameMode
 
     private val _grid: MutableLiveData<List<MutableList<MutableStateFlow<Player?>>>> =
         MutableLiveData(List(gridSize) {
             MutableList(gridSize) {
-                MutableStateFlow<Player?>(null)
+                MutableStateFlow(null)
             }
         })
     val grid: MutableLiveData<List<MutableList<MutableStateFlow<Player?>>>> = _grid
@@ -34,44 +35,62 @@ class PlayViewModel : ViewModel() {
         MutableLiveData("")
     val dialogueMessage: MutableLiveData<String> = _dialogueMessage
 
+    private val lastWinner = MutableStateFlow<Player?>(null)
+
     fun playTurn(row: Int, col: Int) {
         val currentGrid = _grid.value.map { it.toMutableList() }
         if (currentGrid[row][col].value == null && _dialogueStatus.value == DialogueState.OnDefault) {
             currentGrid[row][col].value = _currentPlayer.value
-            setDialogue(state = checkWinner(currentGrid), message = "${_currentPlayer.value} Win")
-            _currentPlayer.value =
-                when (_currentPlayer.value) {
-                    Player.X -> Player.O
-                    Player.O -> Player.X
-                }
+            val status = checkWinner(currentGrid)
+            if (status == DialogueState.OnWin || status == DialogueState.OnTie) {
+                setDialogue(state = status, whoTurn = _currentPlayer.value)
+                //startNewGame()
+            } else {
+
+                _currentPlayer.value =
+                    when (_currentPlayer.value) {
+                        Player.X -> Player.O
+                        Player.O -> Player.X
+                        else -> _currentPlayer.value
+                    }
+            }
             _grid.value = currentGrid
         }
     }
 
-    fun setDialogue(state: DialogueState, message: String = "") {
+
+    fun startNewGame() {
+        _grid.value = List(gridSize) {
+            MutableList(gridSize) {
+                MutableStateFlow<Player?>(null)
+            }
+        }
+        _dialogueStatus.value = DialogueState.OnDefault
+        _currentPlayer.value = lastWinner.value ?: Player.X
+        lastWinner.value = null
+    }
+
+    fun setDialogue(state: DialogueState, whoTurn: Player = Player.NULL) {
         when (state) {
             DialogueState.OnDefault, DialogueState.OnDismiss -> {
-                _dialogueStatus.value = DialogueState.OnDefault
-                _dialogueMessage.value = ""
-                _grid.value = List(gridSize) {
-                    MutableList(gridSize) {
-                        MutableStateFlow<Player?>(null)
-                    }
-                }
+                startNewGame()
             }
 
             DialogueState.OnWin, DialogueState.OnTie -> {
                 _dialogueStatus.value = state
                 when (state) {
                     DialogueState.OnWin -> {
-                        dataManagement.addHistory(winner = message, end_time = "11")
-                        _dialogueMessage.value = message
+                        dataManagement.addHistory(winner = "Player $whoTurn Win", end_time = "11")
+                        lastWinner.value = whoTurn
+                        _dialogueMessage.value = "Player $whoTurn Win"
                     }
 
                     DialogueState.OnTie -> {
                         dataManagement.addHistory(winner = "TIE", end_time = "11")
+                        lastWinner.value = whoTurn
                         _dialogueMessage.value = "This Game are tie"
                     }
+
                     else -> {}
                 }
             }

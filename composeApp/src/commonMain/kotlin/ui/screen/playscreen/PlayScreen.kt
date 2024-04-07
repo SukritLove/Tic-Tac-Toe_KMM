@@ -35,7 +35,7 @@ class PlayScreen : Screen {
         Column(
             modifier = Modifier.fillMaxSize().background(AppColor.background).padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             TicTacToeGrid(
                 boxModifier = Modifier.weight(1f).aspectRatio(1f),
@@ -48,6 +48,7 @@ class PlayScreen : Screen {
                     ) { Text("${dialogueMessage.value}") }
                 }
             }
+            Text("Game Mode -> ${viewModel.gameMode}")
             Text("Player ${currentPlayer.value.name}")
         }
 

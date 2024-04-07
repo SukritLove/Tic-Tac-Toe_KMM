@@ -112,6 +112,6 @@ fun TicTacToeCell(cell: Player?) {
             contentDescription = "O",
             modifier = Modifier.aspectRatio(1f / 2f)
         )
-        null -> {}
+        else -> {}
     }
 }

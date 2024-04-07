@@ -6,7 +6,9 @@ import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import ui.model.DialogueState
+import ui.model.GameMode
 import ui.model.Player
 
 
@@ -37,40 +39,122 @@ class PlayViewModel : ViewModel() {
 
     private val lastWinner = MutableStateFlow<Player?>(null)
 
-    fun playTurn(row: Int, col: Int) {
+    suspend fun playTurn(row: Int? = 0, col: Int? = 0) {
         val currentGrid = _grid.value.map { it.toMutableList() }
-        if (currentGrid[row][col].value == null && _dialogueStatus.value == DialogueState.OnDefault) {
+        if (currentGrid[row!!][col!!].value == null && _dialogueStatus.value == DialogueState.OnDefault) {
             currentGrid[row][col].value = _currentPlayer.value
             val status = checkWinner(currentGrid)
-            if (status == DialogueState.OnWin || status == DialogueState.OnTie) {
-                setDialogue(state = status, whoTurn = _currentPlayer.value)
-                //startNewGame()
-            } else {
-
-                _currentPlayer.value =
-                    when (_currentPlayer.value) {
-                        Player.X -> Player.O
-                        Player.O -> Player.X
-                        else -> _currentPlayer.value
+            when (gameMode) {
+                GameMode.Player -> {
+                    if (status == DialogueState.OnWin || status == DialogueState.OnTie) {
+                        setDialogue(state = status, whoTurn = _currentPlayer.value)
+                    } else {
+                        _currentPlayer.value =
+                            when (_currentPlayer.value) {
+                                Player.X -> Player.O
+                                Player.O -> Player.X
+                                else -> _currentPlayer.value
+                            }
+                        _grid.value = currentGrid
                     }
+
+                }
+
+                GameMode.AI -> {
+                    if (status == DialogueState.OnWin || status == DialogueState.OnTie) {
+                        setDialogue(state = status, whoTurn = _currentPlayer.value)
+                        //startNewGame()
+                    } else {
+                        _currentPlayer.value =
+                            when (_currentPlayer.value) {
+                                Player.X -> Player.O
+                                Player.O -> Player.X
+                                else -> Player.X
+                            }
+
+                        println("who play ->  ${_currentPlayer.value}")
+                        if (_currentPlayer.value == Player.O) { // Assuming the player X just played, and now it's AI's turn
+                            val aiMove = findBestMove(currentGrid)
+                            if (aiMove != Pair(-1, -1)) {
+                                // Apply AI's best move
+                                playTurn(aiMove.first, aiMove.second)
+                                // Note: Ensure playTurn can handle AI moves without causing recursion or incorrect state transitions
+                            }
+
+
+                            _grid.value = currentGrid
+                        } else {
+                            _grid.value = currentGrid
+                        }
+                    }
+
+                }
             }
-            _grid.value = currentGrid
         }
     }
 
 
-    fun startNewGame() {
-        _grid.value = List(gridSize) {
-            MutableList(gridSize) {
-                MutableStateFlow<Player?>(null)
-            }
+    private fun minimax(
+        grid: List<MutableList<MutableStateFlow<Player?>>>,
+        depth: Int,
+        isMaximizing: Boolean
+    ): Int {
+        val currentStatus = checkWinner(grid)
+        when (currentStatus) {
+            DialogueState.OnWin -> return if (isMaximizing) -10 else 10
+            DialogueState.OnTie -> return 0
+            else -> {}
         }
-        _dialogueStatus.value = DialogueState.OnDefault
-        _currentPlayer.value = lastWinner.value ?: Player.X
-        lastWinner.value = null
+
+        if (isMaximizing) {
+            var bestScore = Int.MIN_VALUE
+            for (row in 0 until gridSize) {
+                for (col in 0 until gridSize) {
+                    if (grid[row][col].value == null) {
+                        grid[row][col].value = Player.O
+                        val score = minimax(grid, depth + 1, false)
+                        grid[row][col].value = null
+                        bestScore = maxOf(score, bestScore)
+                    }
+                }
+            }
+            return bestScore
+        } else {
+            var bestScore = Int.MAX_VALUE
+            for (row in 0 until gridSize) {
+                for (col in 0 until gridSize) {
+                    if (grid[row][col].value == null) {
+                        grid[row][col].value = Player.X
+                        val score = minimax(grid, depth + 1, true)
+                        grid[row][col].value = null
+                        bestScore = minOf(score, bestScore)
+                    }
+                }
+            }
+            return bestScore
+        }
     }
 
-    fun setDialogue(state: DialogueState, whoTurn: Player = Player.NULL) {
+    fun findBestMove(grid: List<MutableList<MutableStateFlow<Player?>>>): Pair<Int, Int> {
+        var bestScore = Int.MIN_VALUE
+        var move = Pair(-1, -1)
+        for (row in 0 until gridSize) {
+            for (col in 0 until gridSize) {
+                if (grid[row][col].value == null) {
+                    grid[row][col].value = Player.O // AI makes its move
+                    val score = minimax(grid, 0, false)
+                    grid[row][col].value = null
+                    if (score > bestScore) {
+                        bestScore = score
+                        move = Pair(row, col)
+                    }
+                }
+            }
+        }
+        return move
+    }
+
+    suspend fun setDialogue(state: DialogueState, whoTurn: Player = Player.NULL) {
         when (state) {
             DialogueState.OnDefault, DialogueState.OnDismiss -> {
                 startNewGame()
@@ -111,14 +195,12 @@ class PlayViewModel : ViewModel() {
                     grid[x][y].value == null
                 ) {
                     winCheck[1][x] = false
-                    println("row")
                 }
                 //Column
                 if (grid[y][x].value != grid[0][x].value ||
                     grid[y][x].value == null
                 ) {
                     winCheck[2][x] = false
-                    println("col")
                 }
                 //Diagonal
                 if (grid[x][x].value != grid[0][0].value ||
@@ -134,7 +216,6 @@ class PlayViewModel : ViewModel() {
             }
 
         }
-        println(winCheck)
         return if (winCheck.any {
                 it.contains(true)
             }) DialogueState.OnWin else if (isBoardFull(grid) && winCheck.none { it.contains(true) }) DialogueState.OnTie else DialogueState.OnDefault
@@ -143,4 +224,23 @@ class PlayViewModel : ViewModel() {
     private fun isBoardFull(grid: List<MutableList<MutableStateFlow<Player?>>>): Boolean {
         return grid.all { row -> row.all { cell -> cell.value != null } }
     }
+
+    private suspend fun startNewGame() {
+        _grid.value = List(gridSize) {
+            MutableList(gridSize) {
+                MutableStateFlow<Player?>(null)
+            }
+        }
+        _currentPlayer.value = lastWinner.value ?: Player.X
+
+        println("calculating")
+        if (gameMode == GameMode.AI) {
+            playTurn()
+        }
+
+        _dialogueStatus.value = DialogueState.OnDefault
+        lastWinner.value = null
+    }
+
+
 }

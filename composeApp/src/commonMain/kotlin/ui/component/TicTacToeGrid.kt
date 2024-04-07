@@ -12,13 +12,16 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import tic_tac_toe_kmm.composeapp.generated.resources.Res
@@ -77,6 +80,7 @@ fun TicTacToeGrid(boxModifier: Modifier, viewModel: PlayViewModel) {
 @Composable
 fun TicTacToeCellGroup(viewModel: PlayViewModel) {
     val gridState = viewModel.grid.observeAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     Column {
         gridState.value.forEachIndexed { rowIndex, row ->
@@ -86,7 +90,14 @@ fun TicTacToeCellGroup(viewModel: PlayViewModel) {
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .clickable { viewModel.playTurn(rowIndex, colIndex) },
+                            .clickable {
+                                coroutineScope.launch {
+                                    viewModel.playTurn(
+                                        rowIndex,
+                                        colIndex
+                                    )
+                                }
+                            },
                         contentAlignment = Alignment.Center
                     ) {
                         TicTacToeCell(cell.collectAsState().value)
@@ -96,6 +107,7 @@ fun TicTacToeCellGroup(viewModel: PlayViewModel) {
         }
     }
 }
+
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -112,6 +124,7 @@ fun TicTacToeCell(cell: Player?) {
             contentDescription = "O",
             modifier = Modifier.aspectRatio(1f / 2f)
         )
+
         else -> {}
     }
 }

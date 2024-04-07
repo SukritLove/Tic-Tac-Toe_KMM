@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +21,7 @@ import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.screen.Screen
 import com.example.compose.AppColor
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
+import kotlinx.coroutines.launch
 import ui.component.TicTacToeGrid
 import ui.model.DialogueState
 
@@ -32,6 +34,7 @@ class PlayScreen : Screen {
         val currentPlayer = viewModel.currentPlayer.observeAsState()
         val dialogueStatus = viewModel.dialogueStatus.observeAsState()
         val dialogueMessage = viewModel.dialogueMessage.observeAsState()
+        val coroutineScope = rememberCoroutineScope()
         Column(
             modifier = Modifier.fillMaxSize().background(AppColor.background).padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -42,7 +45,13 @@ class PlayScreen : Screen {
                 viewModel
             )
             if (dialogueStatus.value == DialogueState.OnWin || dialogueStatus.value == DialogueState.OnTie) {
-                Dialog(onDismissRequest = { viewModel.setDialogue(DialogueState.OnDismiss) }) {
+                Dialog(onDismissRequest = {
+                    coroutineScope.launch {
+                        viewModel.setDialogue(
+                            DialogueState.OnDismiss
+                        )
+                    }
+                }) {
                     Box(
                         Modifier.size(100.dp).background(Color.White)
                     ) { Text("${dialogueMessage.value}") }

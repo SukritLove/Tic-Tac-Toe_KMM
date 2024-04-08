@@ -1,13 +1,10 @@
-package GameLogic
+package gamePlayLogic
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import ui.model.DialogueState
 import ui.model.GameState
 import ui.model.Player
-import kotlin.random.Random
 
-private var i = 1
 
 class Computer(grid: Int) : ViewModel() {
     private val gridSize = grid
@@ -32,7 +29,7 @@ class Computer(grid: Int) : ViewModel() {
         return move
     }
 
-   private fun minimax(
+    private fun minimax(
         grid: List<MutableList<MutableStateFlow<Player?>>>,
         depth: Int,
         alpha: Int,
@@ -43,7 +40,7 @@ class Computer(grid: Int) : ViewModel() {
         when (currentStatus) {
             GameState.OnWin -> return if (isMaximizing) -10 + depth else 10 - depth
             GameState.OnTie -> return 0
-            else -> { }
+            else -> {}
         }
 
         if (depth == 0) {

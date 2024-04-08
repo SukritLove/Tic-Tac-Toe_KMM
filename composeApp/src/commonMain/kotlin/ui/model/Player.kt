@@ -1,5 +1,5 @@
 package ui.model
 
 enum class Player {
-    X, O, NULL
+    X, O, AI, NULL
 }

@@ -1,7 +1,7 @@
 package ui.screen.playscreen
 
-import GameLogic.Computer
-import GameLogic.checkWinner
+import gamePlayLogic.Computer
+import gamePlayLogic.checkWinner
 import data.dataRepository.DataRepo
 import data.database.DatabaseManagement
 import dev.icerock.moko.mvvm.livedata.LiveData
@@ -99,6 +99,7 @@ class PlayViewModel : ViewModel() {
             GameState.OnWin -> {
                 setDialogue(DialogueState.OnShow)
                 dataManagement.addHistory(winner = "Player $whoTurn Win", end_time = "11")
+                lastGame.value = GameState.OnWin
                 lastWinner.value = whoTurn
                 _dialogueMessage.value = "Player $whoTurn Win"
             }
@@ -106,6 +107,7 @@ class PlayViewModel : ViewModel() {
             GameState.OnTie -> {
                 setDialogue(DialogueState.OnShow)
                 dataManagement.addHistory(winner = "TIE", end_time = "11")
+                lastGame.value = GameState.OnTie
                 lastWinner.value = whoTurn
                 _dialogueMessage.value = "This Game are tie"
 
@@ -116,19 +118,20 @@ class PlayViewModel : ViewModel() {
 
     private fun startNewGame() {
         _grid.value = List(gridSize) {
-            MutableList(gridSize) {
-                MutableStateFlow<Player?>(null)
-            }
+            MutableList(gridSize) { MutableStateFlow<Player?>(null) }
         }
-        lastGame.value = gameState.value
-        _currentPlayer.value = lastWinner.value ?: Player.X
-        _gameState.value = GameState.NONE
-        println(lastGame.value)
-
-        if (gameMode == GameMode.AI && _currentPlayer.value == Player.O) {
+        gameState.value = GameState.NONE
+        _currentPlayer.value = if (lastGame.value == GameState.OnTie) {
+            if (lastWinner.value == Player.X) Player.O else Player.X
+        } else {
+            lastWinner.value ?: Player.X
+        }
+        println("Last game: ${lastGame.value}, Starting new game with player: ${currentPlayer.value}")
+        if (gameMode == GameMode.AI && currentPlayer.value == Player.O) {
             playTurn()
         }
     }
+
 
 
 }

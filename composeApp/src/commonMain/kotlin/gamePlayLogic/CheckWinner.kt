@@ -1,7 +1,6 @@
-package GameLogic
+package gamePlayLogic
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import ui.model.DialogueState
 import ui.model.GameState
 import ui.model.Player
 

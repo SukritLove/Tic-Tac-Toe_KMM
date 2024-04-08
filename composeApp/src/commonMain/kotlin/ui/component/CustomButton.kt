@@ -28,12 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose.AppColor
+import ui.model.GameMode
 import ui.theme.Typo
 
 object CustomButton {
 
     @Composable
-    fun addRemove(btnText: String, onButtonClick: () -> Unit) {
+    fun addRemove(btnText: String, onButtonClick: () -> Unit, gameMode: GameMode) {
 
         ElevatedButton(
             onClick = onButtonClick,
@@ -41,11 +42,11 @@ object CustomButton {
             shape = CircleShape,
             contentPadding = PaddingValues(3.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = AppColor.burnt_sienna
+                containerColor = AppColor.burnt_sienna, disabledContainerColor = Color.Gray
             ),
             interactionSource = remember { MutableInteractionSource() },
-
-            ) {
+            enabled = (gameMode == GameMode.Player)
+        ) {
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.Center,

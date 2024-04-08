@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ui.model.DialogueState
 import ui.model.GameMode
+import ui.model.GameState
 import ui.model.Player
 import kotlin.random.Random
 
@@ -33,8 +34,12 @@ class PlayViewModel : ViewModel() {
     private val _currentPlayer: MutableLiveData<Player> = MutableLiveData(Player.X)
     val currentPlayer: LiveData<Player> = _currentPlayer
 
+    private val _gameState: MutableLiveData<GameState> =
+        MutableLiveData(GameState.NONE)
+    val gameState: MutableLiveData<GameState> = _gameState
+
     private val _dialogueStatus: MutableLiveData<DialogueState> =
-        MutableLiveData(DialogueState.OnDefault)
+        MutableLiveData(DialogueState.OnDismiss)
     val dialogueStatus: MutableLiveData<DialogueState> = _dialogueStatus
 
     private val _dialogueMessage: MutableLiveData<String> =
@@ -42,18 +47,18 @@ class PlayViewModel : ViewModel() {
     val dialogueMessage: MutableLiveData<String> = _dialogueMessage
 
     private val lastWinner = MutableStateFlow<Player?>(null)
-    private val lastGame = MutableStateFlow<DialogueState?>(null)
+    private val lastGame = MutableStateFlow<GameState?>(null)
 
 
     fun playTurn(row: Int? = 0, col: Int? = 0) {
         val currentGrid = _grid.value.map { it.toMutableList() }
-        if (currentGrid[row!!][col!!].value == null && _dialogueStatus.value == DialogueState.OnDefault) {
+        if (currentGrid[row!!][col!!].value == null && _gameState.value == GameState.NONE) {
             currentGrid[row][col].value = _currentPlayer.value
             val status = checkWinner(currentGrid)
             when (gameMode) {
                 GameMode.Player -> {
-                    if (status == DialogueState.OnWin || status == DialogueState.OnTie) {
-                        setDialogue(state = status, whoTurn = _currentPlayer.value)
+                    if (status == GameState.OnWin || status == GameState.OnTie) {
+                        winningHandler(state = status, whoTurn = _currentPlayer.value)
                     } else {
                         _currentPlayer.value =
                             when (_currentPlayer.value) {
@@ -67,8 +72,8 @@ class PlayViewModel : ViewModel() {
                 }
 
                 GameMode.AI -> {
-                    if (status == DialogueState.OnWin || status == DialogueState.OnTie) {
-                        setDialogue(state = status, whoTurn = _currentPlayer.value)
+                    if (status == GameState.OnWin || status == GameState.OnTie) {
+                        winningHandler(state = status, whoTurn = _currentPlayer.value)
                     } else {
 
                         when (_currentPlayer.value) {
@@ -124,29 +129,30 @@ class PlayViewModel : ViewModel() {
         return move
     }
 
-    fun setDialogue(state: DialogueState, whoTurn: Player = Player.NULL) {
+    fun setDialogue(status: DialogueState) {
+        _dialogueStatus.value = status
+        if (status == DialogueState.OnDismiss) {
+            startNewGame()
+        }
+    }
+
+    private fun winningHandler(state: GameState, whoTurn: Player = Player.NULL) {
         when (state) {
-            DialogueState.OnDefault, DialogueState.OnDismiss -> {
-                startNewGame()
+            GameState.NONE -> {}
+
+            GameState.OnWin -> {
+                setDialogue(DialogueState.OnShow)
+                dataManagement.addHistory(winner = "Player $whoTurn Win", end_time = "11")
+                lastWinner.value = whoTurn
+                _dialogueMessage.value = "Player $whoTurn Win"
             }
 
-            DialogueState.OnWin, DialogueState.OnTie -> {
-                _dialogueStatus.value = state
-                when (state) {
-                    DialogueState.OnWin -> {
-                        dataManagement.addHistory(winner = "Player $whoTurn Win", end_time = "11")
-                        lastWinner.value = whoTurn
-                        _dialogueMessage.value = "Player $whoTurn Win"
-                    }
+            GameState.OnTie -> {
+                setDialogue(DialogueState.OnShow)
+                dataManagement.addHistory(winner = "TIE", end_time = "11")
+                lastWinner.value = whoTurn
+                _dialogueMessage.value = "This Game are tie"
 
-                    DialogueState.OnTie -> {
-                        dataManagement.addHistory(winner = "TIE", end_time = "11")
-                        lastWinner.value = whoTurn
-                        _dialogueMessage.value = "This Game are tie"
-                    }
-
-                    else -> {}
-                }
             }
         }
     }
@@ -158,16 +164,14 @@ class PlayViewModel : ViewModel() {
                 MutableStateFlow<Player?>(null)
             }
         }
-        lastGame.value = _dialogueStatus.value
+        lastGame.value = gameState.value
         _currentPlayer.value = lastWinner.value ?: Player.X
-        _dialogueStatus.value = DialogueState.OnDefault
+        _gameState.value = GameState.NONE
         println(lastGame.value)
 
         if (gameMode == GameMode.AI && _currentPlayer.value == Player.O) {
-            println("logic2")
             playTurn()
         }
-        println("outoflogic")
     }
 
 

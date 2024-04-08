@@ -44,7 +44,7 @@ class PlayScreen : Screen {
                 boxModifier = Modifier.weight(1f).aspectRatio(1f),
                 viewModel
             )
-            if (dialogueStatus.value == DialogueState.OnWin || dialogueStatus.value == DialogueState.OnTie) {
+            if (dialogueStatus.value == DialogueState.OnShow) {
                 Dialog(onDismissRequest = {
                     coroutineScope.launch {
                         viewModel.setDialogue(

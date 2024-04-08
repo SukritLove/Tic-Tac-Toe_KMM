@@ -2,9 +2,10 @@ package GameLogic
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import ui.model.DialogueState
+import ui.model.GameState
 import ui.model.Player
 
-fun checkWinner(grid: List<MutableList<MutableStateFlow<Player?>>>): DialogueState {
+fun checkWinner(grid: List<MutableList<MutableStateFlow<Player?>>>): GameState {
     val g = grid.size
     val winCheck = mutableListOf(
         mutableListOf(true, true),  // diagonal check
@@ -41,7 +42,7 @@ fun checkWinner(grid: List<MutableList<MutableStateFlow<Player?>>>): DialogueSta
     }
     return if (winCheck.any {
             it.contains(true)
-        }) DialogueState.OnWin else if (isBoardFull(grid) && winCheck.none { it.contains(true) }) DialogueState.OnTie else DialogueState.OnDefault
+        }) GameState.OnWin else if (isBoardFull(grid) && winCheck.none { it.contains(true) }) GameState.OnTie else GameState.NONE
 }
 
 private fun isBoardFull(grid: List<MutableList<MutableStateFlow<Player?>>>): Boolean {

@@ -45,9 +45,16 @@ class HomeViewModel : ViewModel() {
     }
 
     fun onSelectGameMode() {
-        _gameMode.value = when (_gameMode.value) {
-            GameMode.Player -> GameMode.AI
-            GameMode.AI -> GameMode.Player
+        when (_gameMode.value) {
+            GameMode.Player -> {
+                _gameMode.value = GameMode.AI
+                _gridSize.value = 3
+            }
+
+            GameMode.AI -> {
+                _gameMode.value = GameMode.Player
+
+            }
         }
     }
 

@@ -67,11 +67,11 @@ class HomeScreen : Screen {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(Modifier.weight(1f))
-                CustomButton.addRemove("-") { viewModel.decrementCount() }
+                CustomButton.addRemove("-", { viewModel.decrementCount() }, checked)
                 Spacer(Modifier.padding(20.dp))
                 Text("$gridSize x $gridSize")
                 Spacer(Modifier.padding(20.dp))
-                CustomButton.addRemove("+") { viewModel.incrementCount() }
+                CustomButton.addRemove("+", { viewModel.incrementCount() }, checked)
                 Spacer(Modifier.weight(1f))
             }
             Row(

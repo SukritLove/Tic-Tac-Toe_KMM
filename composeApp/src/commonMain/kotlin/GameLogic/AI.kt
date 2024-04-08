@@ -3,6 +3,7 @@ package GameLogic
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import ui.model.DialogueState
+import ui.model.GameState
 import ui.model.Player
 import kotlin.random.Random
 
@@ -22,8 +23,8 @@ class AI(grid: Int) : ViewModel() {
         println(i)
         val currentStatus = checkWinner(grid)
         when (currentStatus) {
-            DialogueState.OnWin -> return if (isMaximizing) -10 + depth else 10 - depth
-            DialogueState.OnTie -> return 0
+            GameState.OnWin -> return if (isMaximizing) -10 + depth else 10 - depth
+            GameState.OnTie -> return 0
             else -> { /* Continue with the minimax algorithm */
             }
         }

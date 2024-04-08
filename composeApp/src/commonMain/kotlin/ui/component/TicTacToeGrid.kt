@@ -80,7 +80,7 @@ fun TicTacToeGrid(boxModifier: Modifier, viewModel: PlayViewModel) {
 @Composable
 fun TicTacToeCellGroup(viewModel: PlayViewModel) {
     val gridState = viewModel.grid.observeAsState()
-    val coroutineScope = rememberCoroutineScope()
+    val onWorking = viewModel.onWorking.observeAsState()
 
     Column {
         gridState.value.forEachIndexed { rowIndex, row ->
@@ -90,14 +90,17 @@ fun TicTacToeCellGroup(viewModel: PlayViewModel) {
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .clickable {
-                                coroutineScope.launch {
+                            .then(
+                                if (onWorking.value) Modifier.clickable {
                                     viewModel.playTurn(
                                         rowIndex,
                                         colIndex
                                     )
+                                } else {
+                                    Modifier
                                 }
-                            },
+
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         TicTacToeCell(cell.collectAsState().value)

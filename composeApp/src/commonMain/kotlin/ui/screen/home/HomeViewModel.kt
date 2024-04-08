@@ -45,7 +45,6 @@ class HomeViewModel : ViewModel() {
     }
 
     fun onSelectGameMode() {
-
         _gameMode.value = when (_gameMode.value) {
             GameMode.Player -> GameMode.AI
             GameMode.AI -> GameMode.Player

@@ -48,7 +48,9 @@ class HistoryScreen : Screen {
                             horizontalArrangement = Arrangement.SpaceAround,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Text("${historyData.gameMode}")
                             Text("${historyData.winner}")
+                            Text("${historyData.gridSize}")
                             Text("${historyData.end_Time}")
                         }
                     }

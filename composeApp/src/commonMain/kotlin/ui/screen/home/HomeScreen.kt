@@ -29,6 +29,7 @@ import com.example.compose.AppColor
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
+import shared.common.exitApplication
 import tic_tac_toe_kmm.composeapp.generated.resources.Res
 import ui.component.CustomButton
 import ui.component.CustomText
@@ -107,7 +108,7 @@ class HomeScreen : Screen {
             Button(onClick = { viewModel.onClickHistory(navigator) }) {
                 Text("History")
             }
-            Button(onClick = { }) {
+            Button(onClick = { exitApplication() }) {
                 Text("Exit")
             }
 

@@ -6,6 +6,12 @@ import kotlinx.coroutines.flow.Flow
 interface DataSource {
 
     fun getHistory(): Flow<List<HistoryData>>
-    fun addHistory(winner: String?, end_time: String?)
+    fun addHistory(
+        gameMode: String,
+        winner: String,
+        gridSize: Long,
+        end_time: String
+    )
+
     fun clearHistory()
 }

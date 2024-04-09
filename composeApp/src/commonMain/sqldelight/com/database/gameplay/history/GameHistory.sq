@@ -1,15 +1,17 @@
 CREATE TABLE GameHistory (
     game_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    winner TEXT,
-    end_time TEXT
+    gameMode TEXT NOT NULL CHECK(gameMode IN ('PvP', 'AI')),
+    winner TEXT NOT NULL,
+    gridSize INTEGER NOT NULL,
+    end_time TEXT NOT NULL
 );
 
 selectAllGames:
 SELECT * FROM GameHistory;
 
 insertHistory:
-INSERT INTO GameHistory(winner, end_time)
-VALUES (?, ?);
+INSERT INTO GameHistory(gameMode, winner, gridSize, end_time)
+VALUES (?,?,?, ?);
 
 deleteHistory:
 DELETE FROM GameHistory;

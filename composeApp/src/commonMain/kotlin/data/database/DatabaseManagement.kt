@@ -14,8 +14,8 @@ class DatabaseManagement {
         }
     }
 
-    fun addHistory(winner: String, end_time: String) {
-        db.addHistory(winner, end_time)
+    fun addHistory(gameMode: String, winner: String, gridSize: Long, end_time: String) {
+        db.addHistory(gameMode, winner, gridSize, end_time)
     }
 
     fun clearHistory() {

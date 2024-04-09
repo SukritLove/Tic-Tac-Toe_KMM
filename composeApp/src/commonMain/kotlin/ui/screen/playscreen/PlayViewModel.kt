@@ -1,5 +1,7 @@
 package ui.screen.playscreen
 
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
+import cafe.adriel.voyager.navigator.Navigator
 import gamePlayLogic.Computer
 import gamePlayLogic.checkWinner
 import data.dataRepository.DataRepo
@@ -12,6 +14,9 @@ import ui.model.DialogueState
 import ui.model.GameMode
 import ui.model.GameState
 import ui.model.Player
+import ui.screen.history.HistoryScreen
+import ui.screen.home.HomeScreen
+import ui.screen.home.HomeViewModel
 
 
 class PlayViewModel : ViewModel() {
@@ -88,7 +93,6 @@ class PlayViewModel : ViewModel() {
         return _grid.value[row!!][col!!].value == null
     }
 
-
     fun setDialogue(status: DialogueState) {
         _onWorking.value = false
         _dialogueStatus.value = status
@@ -104,7 +108,12 @@ class PlayViewModel : ViewModel() {
 
             GameState.OnWin -> {
                 setDialogue(DialogueState.OnShow)
-                dataManagement.addHistory(winner = "Player $whoTurn Win", end_time = "11")
+                dataManagement.addHistory(
+                    gameMode = getGameModeName(),
+                    winner = "Player $whoTurn Win",
+                    gridSize = gridSize.toLong(),
+                    end_time = "11"
+                )
                 lastGame.value = GameState.OnWin
                 lastWinner.value = whoTurn
                 _dialogueMessage.value = "Player $whoTurn Win"
@@ -112,7 +121,12 @@ class PlayViewModel : ViewModel() {
 
             GameState.OnTie -> {
                 setDialogue(DialogueState.OnShow)
-                dataManagement.addHistory(winner = "TIE", end_time = "11")
+                dataManagement.addHistory(
+                    gameMode = getGameModeName(),
+                    winner = "TIE",
+                    gridSize = gridSize.toLong(),
+                    end_time = "11"
+                )
                 lastGame.value = GameState.OnTie
                 lastWinner.value = whoTurn
                 _dialogueMessage.value = "This Game are tie"
@@ -121,6 +135,12 @@ class PlayViewModel : ViewModel() {
         }
     }
 
+    private fun getGameModeName(): String {
+        return when (gameMode) {
+            GameMode.Player -> "PvP"
+            GameMode.AI -> "AI"
+        }
+    }
 
     private fun startNewGame() {
 
@@ -155,5 +175,8 @@ class PlayViewModel : ViewModel() {
 
     }
 
+    fun onBackOrExit(navigator: Navigator) {
+        navigator.pop()
+    }
 
 }

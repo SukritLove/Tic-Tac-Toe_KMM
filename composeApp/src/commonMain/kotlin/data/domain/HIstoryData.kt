@@ -1,7 +1,11 @@
 package data.domain
 
+import ui.model.GameMode
+
 data class HistoryData(
     val game_id: Long,
-    val winner: String? = "",
-    val end_Time: String? = ""
+    val gameMode: String,
+    val winner: String,
+    val gridSize: Long,
+    val end_Time: String
 )

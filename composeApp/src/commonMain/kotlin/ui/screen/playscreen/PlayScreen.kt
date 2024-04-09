@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.compose.AppColor
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
 import kotlinx.coroutines.launch
@@ -30,6 +33,7 @@ class PlayScreen : Screen {
 
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
 
         val currentPlayer = viewModel.currentPlayer.observeAsState()
         val dialogueStatus = viewModel.dialogueStatus.observeAsState()
@@ -53,8 +57,29 @@ class PlayScreen : Screen {
                     }
                 }) {
                     Box(
-                        Modifier.size(100.dp).background(Color.White)
-                    ) { Text("${dialogueMessage.value}") }
+                        Modifier.aspectRatio(1f).background(Color.White)
+                    ) {
+                        Column(
+                            Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text("${dialogueMessage.value}")
+                            Button(onClick = {
+                                coroutineScope.launch {
+                                    viewModel.setDialogue(
+                                        DialogueState.OnDismiss
+                                    )
+                                }
+                            }) {
+                                Text("Restart")
+                            }
+                            Button(onClick = { viewModel.onBackOrExit(navigator) }
+                            ) {
+                                Text("Exit")
+                            }
+                        }
+                    }
                 }
             }
             Text("Game Mode -> ${viewModel.gameMode}")

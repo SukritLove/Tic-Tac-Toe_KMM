@@ -25,9 +25,16 @@ class SQLDelightDatasource(db: GameHistoryDatabase) : DataSource {
             }
     }
 
-    override fun addHistory(winner: String?, end_time: String?) {
+    override fun addHistory(
+        gameMode: String,
+        winner: String,
+        gridSize: Long,
+        end_time: String
+    ) {
         historyQueries.insertHistory(
+            gameMode = gameMode,
             winner = winner,
+            gridSize = gridSize,
             end_time = end_time
         )
     }

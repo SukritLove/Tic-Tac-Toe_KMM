@@ -8,5 +8,5 @@ data class DataRepository(
 )
 
 object DataRepo {
-    var data = DataRepository(3, GameMode.Player)
+    var data = DataRepository(3, GameMode.PvP)
 }

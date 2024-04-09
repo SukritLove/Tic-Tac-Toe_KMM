@@ -137,7 +137,7 @@ class PlayViewModel : ViewModel() {
 
     private fun getGameModeName(): String {
         return when (gameMode) {
-            GameMode.Player -> "PvP"
+            GameMode.PvP -> "PvP"
             GameMode.AI -> "AI"
         }
     }
@@ -145,7 +145,7 @@ class PlayViewModel : ViewModel() {
     private fun startNewGame() {
 
         when (gameMode) {
-            GameMode.Player -> {
+            GameMode.PvP -> {
                 _grid.value = List(gridSize) {
                     MutableList(gridSize) { MutableStateFlow<Player?>(null) }
                 }

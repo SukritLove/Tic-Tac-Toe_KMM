@@ -2,28 +2,27 @@ package ui.screen.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.compose.AppColor
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
@@ -33,87 +32,132 @@ import shared.common.exitApplication
 import tic_tac_toe_kmm.composeapp.generated.resources.Res
 import ui.component.CustomButton
 import ui.component.CustomText
-import ui.model.GameMode
+import ui.component.GameModeSwitch
+import ui.model.ButtonType
+import ui.model.DialogueState
 import ui.theme.Typo
 
 @OptIn(ExperimentalResourceApi::class)
-class HomeScreen : Screen {
+class HomeScreen() : Screen {
     private val viewModel = HomeViewModel()
+
 
     @Composable
     override fun Content() {
+        val nav = LocalNavigator.currentOrThrow
 
         val typo = Typo()
 
         val gridSize by viewModel.gridSize.collectAsState()
 
-        val navigator = LocalNavigator.currentOrThrow
-
         val checked = viewModel.gameMode.observeAsState().value
+
+        val dialogueState = viewModel.dialogueState.observeAsState().value
+
 
 
         Column(
-            modifier = Modifier.fillMaxSize().background(AppColor.background).padding(20.dp),
+            modifier = Modifier.fillMaxSize().background(AppColor.background).padding(top = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.Top
         ) {
             CustomText.logoText(
                 text = stringResource(Res.string.app_name),
                 textStyle = typo.titleLarge
             )
-            Text("Select Grid Size")
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                Modifier.fillMaxWidth().padding(30.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(35.dp)
+            )
+            {
+                Text(text = "Select Grid Size", style = Typo().bodyLarge)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(Modifier.weight(1f))
+                    CustomButton.iconButton(
+                        btnText = ButtonType.Minus,
+                        onButtonClick = { viewModel.decrementCount() },
+                        gameMode = checked
+                    )
+                    Spacer(Modifier.padding(20.dp))
+                    Text("$gridSize x $gridSize", style = Typo().bodyLarge)
+                    Spacer(Modifier.padding(20.dp))
+                    CustomButton.iconButton(
+                        btnText = ButtonType.Plus,
+                        onButtonClick = { viewModel.incrementCount() },
+                        gameMode = checked
+                    )
+                    Spacer(Modifier.weight(1f))
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(20.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    GameModeSwitch(
+                        checked = checked,
+                        onCheckChange = { viewModel.onSelectGameMode() })
+                }
+            }
+
+            Column(
+                Modifier.fillMaxWidth().padding(25.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(35.dp)
             ) {
-                Spacer(Modifier.weight(1f))
-                CustomButton.addRemove("-", { viewModel.decrementCount() }, checked)
-                Spacer(Modifier.padding(20.dp))
-                Text("$gridSize x $gridSize")
-                Spacer(Modifier.padding(20.dp))
-                CustomButton.addRemove("+", { viewModel.incrementCount() }, checked)
-                Spacer(Modifier.weight(1f))
+                CustomButton.styledButton(
+                    btnText = "Play",
+                    onButtonClick = { viewModel.onClickPlay(nav) })
+                CustomButton.styledButton(
+                    btnText = "History",
+                    onButtonClick = { viewModel.onClickHistory(nav) })
+                CustomButton.styledButton(
+                    btnText = "Exit",
+                    onButtonClick = { viewModel.onExit(DialogueState.OnShow) })
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(Modifier.weight(1f))
-                Text(
-                    "Player vs. Player",
-                    style = TextStyle(color = if (checked == GameMode.Player) Color.Green else Color.Red)
-                )
-                Spacer(Modifier.padding(20.dp))
-                Switch(
-                    checked = checked != GameMode.Player,
-                    onCheckedChange = {
-                        viewModel.onSelectGameMode()
-                    },
-                )
-                Spacer(Modifier.padding(20.dp))
-                Text(
-                    "Vs. Computer",
-                    style = TextStyle(color = if (checked == GameMode.AI) Color.Green else Color.Red)
-                )
-                Spacer(Modifier.weight(1f))
-            }
+            if (dialogueState == DialogueState.OnShow) {
+                Dialog(onDismissRequest = {
+                    viewModel.onExit(DialogueState.OnDismiss)
+                }) {
+                    Box(
+                        Modifier.size(width = 250.dp, height = 150.dp)
+                            .background(AppColor.background, shape = RoundedCornerShape(10.dp))
+                    ) {
+                        Column(
+                            Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.SpaceAround
+                        ) {
+                            Text("Sure you want to quit?", style = Typo().titleSmall)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                CustomButton.decisionButton(
+                                    btnText = ButtonType.Yes,
+                                    onButtonClick = {
 
+                                        exitApplication()
+                                    })
+                                CustomButton.decisionButton(
+                                    btnText = ButtonType.No,
+                                    onButtonClick = { viewModel.onExit(DialogueState.OnDismiss) })
+                            }
 
-
-            Button(onClick = { viewModel.onClickPlay(navigator) }) {
-                Text("Play")
+                        }
+                    }
+                }
             }
-            Button(onClick = { viewModel.onClickHistory(navigator) }) {
-                Text("History")
-            }
-            Button(onClick = { exitApplication() }) {
-                Text("Exit")
-            }
-
         }
     }
+
+
 }
 
 

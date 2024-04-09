@@ -27,11 +27,43 @@ fun Typo(): Typography {
             lineHeight = 53.82.sp,
             letterSpacing = 0.5.sp
         ),
-        bodyMedium = TextStyle(
+        titleMedium = TextStyle(
+            fontFamily = rowdies,
+            fontWeight = FontWeight.W700,
+            fontStyle = FontStyle.Normal,
+            fontSize = 26.sp,
+            lineHeight = 0.sp,
+            letterSpacing = 0.5.sp
+        ),
+        titleSmall = TextStyle(
+            fontFamily = rowdies,
+            fontWeight = FontWeight.W700,
+            fontStyle = FontStyle.Normal,
+            fontSize = 17.sp,
+            lineHeight = 0.sp,
+            letterSpacing = 0.5.sp
+        ),
+        bodyLarge = TextStyle(
             fontFamily = rowdies,
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal,
             fontSize = 25.sp,
+            lineHeight = 0.sp,
+            letterSpacing = 0.5.sp
+        ),
+        bodyMedium = TextStyle(
+            fontFamily = rowdies,
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal,
+            fontSize = 18.sp,
+            lineHeight = 0.sp,
+            letterSpacing = 0.5.sp
+        ),
+        bodySmall = TextStyle(
+            fontFamily = rowdies,
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal,
+            fontSize = 7.sp,
             lineHeight = 0.sp,
             letterSpacing = 0.5.sp
         )

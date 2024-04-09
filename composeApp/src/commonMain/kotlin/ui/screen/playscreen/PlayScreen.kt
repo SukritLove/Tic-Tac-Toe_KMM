@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.compose.AppColor
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
@@ -28,12 +29,12 @@ import kotlinx.coroutines.launch
 import ui.component.TicTacToeGrid
 import ui.model.DialogueState
 
-class PlayScreen : Screen {
+class PlayScreen(navigator: Navigator) : Screen {
     private val viewModel = PlayViewModel()
+    private val nav = navigator
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
 
         val currentPlayer = viewModel.currentPlayer.observeAsState()
         val dialogueStatus = viewModel.dialogueStatus.observeAsState()
@@ -64,7 +65,7 @@ class PlayScreen : Screen {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            Text("${dialogueMessage.value}")
+                            Text(dialogueMessage.value)
                             Button(onClick = {
                                 coroutineScope.launch {
                                     viewModel.setDialogue(
@@ -74,7 +75,10 @@ class PlayScreen : Screen {
                             }) {
                                 Text("Restart")
                             }
-                            Button(onClick = { viewModel.onBackOrExit(navigator) }
+                            Button(onClick = {
+                                viewModel.setDialogue(DialogueState.OnShow)
+                                viewModel.onBackOrExit(nav)
+                            }
                             ) {
                                 Text("Exit")
                             }

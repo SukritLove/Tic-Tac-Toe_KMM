@@ -10,6 +10,7 @@ import androidx.compose.ui.text.withStyle
 import com.example.compose.AppColor
 import org.jetbrains.compose.resources.stringResource
 import tic_tac_toe_kmm.composeapp.generated.resources.Res
+import ui.theme.Typo
 
 object CustomText {
 
@@ -19,17 +20,17 @@ object CustomText {
         val appendText = text.split(" ")
         val annotatedString = buildAnnotatedString {
             // Tic in Red
-            withStyle(style = SpanStyle(color = AppColor.tic)) {
+            withStyle(style = SpanStyle(color = AppColor.sienna)) {
                 append(appendText[0])
             }
             append(" ") // Adding space between words
             // Tac in Green
-            withStyle(style = SpanStyle(color = AppColor.tac)) {
+            withStyle(style = SpanStyle(color = AppColor.light_sienna)) {
                 append(appendText[1])
             }
             append(" ") // Adding space between words
             // Toe in Blue
-            withStyle(style = SpanStyle(color = AppColor.toe)) {
+            withStyle(style = SpanStyle(color = AppColor.dark_sienna)) {
                 append(appendText[2])
             }
         }
@@ -37,7 +38,11 @@ object CustomText {
             text = annotatedString,
             style = textStyle
         )
+    }
 
+    @Composable
+    fun historyTopBar() {
+        Text("History", style = Typo().titleLarge.copy(color = AppColor.light_sienna))
     }
 
 }

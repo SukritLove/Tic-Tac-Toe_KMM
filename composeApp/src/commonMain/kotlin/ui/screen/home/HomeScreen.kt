@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.stringResource
 import shared.common.exitApplication
 import tic_tac_toe_kmm.composeapp.generated.resources.Res
 import ui.component.CustomButton
+import ui.component.CustomDialogueBox
 import ui.component.CustomText
 import ui.component.GameModeSwitch
 import ui.model.ButtonType
@@ -121,38 +122,13 @@ class HomeScreen() : Screen {
                     onButtonClick = { viewModel.onExit(DialogueState.OnShow) })
             }
             if (dialogueState == DialogueState.OnShow) {
-                Dialog(onDismissRequest = {
-                    viewModel.onExit(DialogueState.OnDismiss)
-                }) {
-                    Box(
-                        Modifier.size(width = 250.dp, height = 150.dp)
-                            .background(AppColor.background, shape = RoundedCornerShape(10.dp))
-                    ) {
-                        Column(
-                            Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.SpaceAround
-                        ) {
-                            Text("Sure you want to quit?", style = Typo().titleSmall)
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                CustomButton.decisionButton(
-                                    btnText = ButtonType.Yes,
-                                    onButtonClick = {
-
-                                        exitApplication()
-                                    })
-                                CustomButton.decisionButton(
-                                    btnText = ButtonType.No,
-                                    onButtonClick = { viewModel.onExit(DialogueState.OnDismiss) })
-                            }
-
-                        }
-                    }
-                }
+                CustomDialogueBox.customDecision(
+                    onDismissRequest = {
+                        viewModel.onExit(DialogueState.OnDismiss)
+                    },
+                    dialogueMessage = "Sure you want to quit?",
+                    onConfirmClicked = { exitApplication() },
+                    onDeclineClicked = { viewModel.onExit(DialogueState.OnDismiss) })
             }
         }
     }

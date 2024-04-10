@@ -9,6 +9,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ui.model.ButtonType
+import ui.model.DialogueState
 import ui.model.GameMode
 
 class HistoryViewModel : ViewModel() {
@@ -27,14 +28,17 @@ class HistoryViewModel : ViewModel() {
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _dialogueState = MutableLiveData(DialogueState.OnDismiss)
+    val dialogueState: LiveData<DialogueState> = _dialogueState
+
+
     init {
         viewModelScope.launch {
             _history.value = dataManagement.getHistory()
             _showHistory.value = _history.value.filter { it.gameMode == GameMode.PvP.name }
-            if (_showHistory.value.isNotEmpty()) {
-                delay(350)
-                _isLoading.value = true
-            }
+            delay(350)
+            _isLoading.value = true
+
         }
     }
 
@@ -42,6 +46,7 @@ class HistoryViewModel : ViewModel() {
         dataManagement.clearHistory()
         _showHistory.value = emptyList()
         _history.value = emptyList()
+        setDialogue(DialogueState.OnDismiss)
     }
 
     fun onBackClicked(navigator: Navigator) {
@@ -65,6 +70,10 @@ class HistoryViewModel : ViewModel() {
             _isLoading.value = true
         }
 
+    }
+
+    fun setDialogue(state: DialogueState) {
+        _dialogueState.value = state
     }
 
 }

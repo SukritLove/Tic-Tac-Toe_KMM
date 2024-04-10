@@ -55,7 +55,7 @@ fun Typo(): Typography {
             fontFamily = rowdies,
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal,
-            fontSize = 18.sp,
+            fontSize = 15.sp,
             lineHeight = 0.sp,
             letterSpacing = 0.5.sp
         ),

@@ -33,9 +33,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import com.example.compose.AppColor
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
+import shared.common.exitApplication
 import ui.component.CustomButton
+import ui.component.CustomDialogueBox
 import ui.component.CustomText
 import ui.model.ButtonType
+import ui.model.DialogueState
 import ui.model.GameMode
 import ui.theme.Typo
 
@@ -48,6 +51,7 @@ class HistoryScreen(navigator: Navigator) : Screen {
         val history = viewModel.showHistory.observeAsState()
         val filter = viewModel.filterType.observeAsState()
         val isLoading = viewModel.isLoading.observeAsState().value
+        val dialogueState = viewModel.dialogueState.observeAsState().value
 
         Column(
             Modifier.fillMaxSize().background(AppColor.background),
@@ -60,7 +64,6 @@ class HistoryScreen(navigator: Navigator) : Screen {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-
                 Spacer(Modifier.weight(1f))
                 CustomButton.iconButton(
                     modifier = Modifier.alpha(if (filter.value == GameMode.AI) 1f else 0f),
@@ -74,66 +77,122 @@ class HistoryScreen(navigator: Navigator) : Screen {
                     btnText = ButtonType.Next,
                     onButtonClick = { viewModel.onNextAndPreviousClicked(ButtonType.Next) })
                 Spacer(Modifier.weight(1f))
-
             }
             Box(
                 Modifier.size(width = 450.dp, height = 450.dp).padding(20.dp)
                     .background(Color.White, shape = RoundedCornerShape(10.dp))
                     .border(3.dp, Color.Black, RoundedCornerShape(10.dp)),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.TopCenter
             ) {
-                if (isLoading) {
-                    if (history.value.isNotEmpty()) {
-                        LazyColumn(
-                            Modifier.aspectRatio(1f).padding(20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Top
-                        ) {
-                            items(history.value) { historyData ->
-                                Row(
-                                    Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = historyData.winner,
-                                        style = Typo().bodyMedium,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight(2.5f)
-                                    )
-                                    Text(
-                                        text = "${historyData.gridSize} x ${historyData.gridSize}",
-                                        style = Typo().bodyMedium,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        text = historyData.end_Time,
-                                        style = Typo().bodyMedium,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight(1f)
-                                    )
+                Column() {
+                    Row(
+                        Modifier.fillMaxWidth().background(
+                            color = AppColor.yellow_wheat,
+                            shape = RoundedCornerShape(10.dp)
+                        ).border(3.dp, Color.Black, RoundedCornerShape(10.dp)).padding(10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Winner",
+                            style = Typo().bodyMedium.copy(AppColor.sienna),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1.5f)
+                        )
+                        Text(
+                            text = "Grid",
+                            style = Typo().bodyMedium.copy(AppColor.sienna),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "End Time",
+                            style = Typo().bodyMedium.copy(AppColor.sienna),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    if (isLoading) {
+                        if (history.value.isNotEmpty()) {
+                            LazyColumn(
+                                Modifier.fillMaxWidth().padding(10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top
+                            ) {
+                                items(history.value) { historyData ->
+                                    Row(
+                                        Modifier.fillMaxWidth().padding(bottom = 5.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = historyData.winner,
+                                            style = Typo().bodyMedium,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.weight(1.5f)
+                                        )
+                                        Text(
+                                            text = "${historyData.gridSize} x ${historyData.gridSize}",
+                                            style = Typo().bodyMedium,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Text(
+                                            text = historyData.end_Time,
+                                            style = Typo().bodyMedium,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
                                 }
-                            }
 
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "-No Data-",
+                                    style = Typo().titleMedium,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         }
                     } else {
-                        Text(text = "No Data", style = Typo().titleMedium)
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "-Loading-",
+                                style = Typo().titleMedium,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
-                } else {
-                    Text(text = "Loading...", style = Typo().titleMedium)
                 }
             }
 
             CustomButton.styledButton(
                 modifier = Modifier.width(250.dp),
                 btnText = "Clear History",
-                onButtonClick = { /*viewModel.clearHistory()*/ })
+                onButtonClick = { viewModel.setDialogue(DialogueState.OnShow) })
 
             CustomButton.styledButton(
                 btnText = "Back",
                 onButtonClick = { viewModel.onBackClicked(nav) })
-
+        }
+        if (dialogueState == DialogueState.OnShow) {
+            CustomDialogueBox.customDecision(
+                onDismissRequest = {
+                    viewModel.setDialogue(DialogueState.OnDismiss)
+                },
+                dialogueMessage = "Wipe your history clean?",
+                onConfirmClicked = { viewModel.clearHistory() },
+                onDeclineClicked = { viewModel.setDialogue(DialogueState.OnDismiss) })
         }
 
     }

@@ -100,7 +100,7 @@ class HistoryScreen(navigator: Navigator) : Screen {
                             modifier = Modifier.weight(1.5f)
                         )
                         Text(
-                            text = "Grid",
+                            text = "Board",
                             style = Typo().bodyMedium.copy(AppColor.sienna),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.weight(1f)

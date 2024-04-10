@@ -72,7 +72,7 @@ class HomeScreen() : Screen {
                 verticalArrangement = Arrangement.spacedBy(35.dp)
             )
             {
-                Text(text = "Select Grid Size", style = Typo().bodyLarge)
+                Text(text = "Select Board Size", style = Typo().bodyLarge)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,

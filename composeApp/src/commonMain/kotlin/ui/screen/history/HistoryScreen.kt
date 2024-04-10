@@ -54,7 +54,7 @@ class HistoryScreen(navigator: Navigator) : Screen {
         val dialogueState = viewModel.dialogueState.observeAsState().value
 
         Column(
-            Modifier.fillMaxSize().background(AppColor.background),
+            Modifier.fillMaxSize().background(AppColor.background).padding(top = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {

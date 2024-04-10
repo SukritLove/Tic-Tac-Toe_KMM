@@ -11,14 +11,14 @@ import ui.model.GameMode
 import ui.theme.Typo
 
 @Composable
-fun GameModeSwitch(checked: GameMode, onCheckChange: (Boolean) -> Unit) {
+fun GameModeSwitch(checked: Boolean, onCheckChange: (Boolean) -> Unit) {
     Switch(
         modifier = Modifier.scale(2.5f),
-        checked = checked != GameMode.PvP,
+        checked = !checked,
         onCheckedChange = onCheckChange,
         thumbContent = {
             Text(
-                if (checked == GameMode.PvP) {
+                if (checked) {
                     "PvP"
                 } else {
                     "AI"

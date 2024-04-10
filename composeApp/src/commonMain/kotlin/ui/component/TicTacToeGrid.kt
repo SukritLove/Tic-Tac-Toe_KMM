@@ -12,21 +12,18 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import tic_tac_toe_kmm.composeapp.generated.resources.Res
 import ui.model.Player
-import ui.screen.playscreen.PlayViewModel
+import ui.screen.play.PlayViewModel
 
 
 @Composable
@@ -99,7 +96,6 @@ fun TicTacToeCellGroup(viewModel: PlayViewModel) {
                                 } else {
                                     Modifier
                                 }
-
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -119,13 +115,13 @@ fun TicTacToeCell(cell: Player?) {
         Player.X -> Image(
             painter = painterResource(Res.drawable.iconX),
             contentDescription = "X",
-            modifier = Modifier.aspectRatio(1f / 2f)
+            modifier = Modifier.aspectRatio(1f/1.5f)
         )
 
         Player.O -> Image(
             painter = painterResource(Res.drawable.iconO),
             contentDescription = "O",
-            modifier = Modifier.aspectRatio(1f / 2f)
+            modifier = Modifier.aspectRatio(1f/1.5f)
         )
 
         else -> {}

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import ui.model.DialogueState
 import ui.model.GameMode
 import ui.screen.history.HistoryScreen
-import ui.screen.playscreen.PlayScreen
+import ui.screen.play.PlayScreen
 
 class HomeViewModel : ViewModel() {
 
@@ -24,6 +24,10 @@ class HomeViewModel : ViewModel() {
 
     private val _dialogueState = MutableLiveData(DialogueState.OnDismiss)
     val dialogueState: LiveData<DialogueState> = _dialogueState
+
+    private val _isEnable = MutableLiveData(true)
+    val isEnable: LiveData<Boolean> = _isEnable
+
 
     fun incrementCount() = viewModelScope.launch {
         if (_gridSize.value != 8) {
@@ -51,17 +55,23 @@ class HomeViewModel : ViewModel() {
         when (_gameMode.value) {
             GameMode.PvP -> {
                 _gameMode.value = GameMode.AI
+                _isEnable.value = false
                 _gridSize.value = 3
             }
 
             GameMode.AI -> {
                 _gameMode.value = GameMode.PvP
+                _isEnable.value = true
             }
         }
     }
 
     fun onExit(state: DialogueState) {
         _dialogueState.value = state
+    }
+
+    fun enableButton() {
+
     }
 
 

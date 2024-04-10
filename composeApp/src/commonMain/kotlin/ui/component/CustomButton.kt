@@ -35,9 +35,8 @@ object CustomButton {
         modifier: Modifier = Modifier,
         btnText: ButtonType,
         onButtonClick: () -> Unit,
-        gameMode: GameMode = GameMode.PvP
+        isEnable: Boolean = true
     ) {
-        val isEnable = gameMode == GameMode.PvP
         Box(
             modifier = modifier.size(50.dp).clickable(onClick = onButtonClick, enabled = isEnable),
         ) {
@@ -104,8 +103,8 @@ object CustomButton {
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = when (btnText) {
-                    ButtonType.Yes -> AppColor.soft_sage_green
-                    ButtonType.No -> AppColor.dusty_coral_red
+                    ButtonType.Yes, ButtonType.Restart -> AppColor.soft_sage_green
+                    ButtonType.No, ButtonType.Quit -> AppColor.dusty_coral_red
                     else -> AppColor.yellow_wheat
                 },
                 contentColor = AppColor.background

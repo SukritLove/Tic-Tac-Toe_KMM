@@ -1,22 +1,21 @@
-package ui.screen.playscreen
+package ui.screen.play
 
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.navigator.Navigator
 import gamePlayLogic.Computer
 import gamePlayLogic.checkWinner
 import data.dataRepository.DataRepo
 import data.database.DatabaseManagement
+import data.getCurrentTime
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import ui.model.DialogueState
+import kotlinx.coroutines.launch
 import ui.model.GameMode
 import ui.model.GameState
+import ui.model.PlayDialogueState
 import ui.model.Player
-import ui.screen.history.HistoryScreen
-import ui.screen.home.HomeScreen
-import ui.screen.home.HomeViewModel
 
 
 class PlayViewModel : ViewModel() {
@@ -39,9 +38,9 @@ class PlayViewModel : ViewModel() {
     private val gameState: MutableStateFlow<GameState> =
         MutableStateFlow(GameState.NONE)
 
-    private val _dialogueStatus: MutableLiveData<DialogueState> =
-        MutableLiveData(DialogueState.OnDismiss)
-    val dialogueStatus: MutableLiveData<DialogueState> = _dialogueStatus
+    private val _dialogueStatus: MutableLiveData<PlayDialogueState> =
+        MutableLiveData(PlayDialogueState.onDismiss)
+    val dialogueStatus: MutableLiveData<PlayDialogueState> = _dialogueStatus
 
     private val _dialogueMessage: MutableLiveData<String> =
         MutableLiveData("")
@@ -54,17 +53,21 @@ class PlayViewModel : ViewModel() {
     val onWorking: LiveData<Boolean> = _onWorking
     fun playTurn(row: Int? = 0, col: Int? = 0) {
         _onWorking.value = false
-        if (gameState.value == GameState.NONE && isMoveValid(row, col)) {
-            updateGameGrid(row, col)
-            val status = checkWinner(_grid.value)
-            if (status == GameState.OnWin || status == GameState.OnTie) {
-                winningHandler(state = status, whoTurn = _currentPlayer.value)
-            } else {
+        viewModelScope.launch {
+            if (gameState.value == GameState.NONE && isMoveValid(row, col)) {
+                updateGameGrid(row, col)
+                val status = checkWinner(_grid.value)
+                if (status == GameState.OnWin || status == GameState.OnTie) {
+                    winningHandler(state = status, whoTurn = _currentPlayer.value)
+                } else {
 
-                switchCurrentPlayer()
-                if (gameMode == GameMode.AI && _currentPlayer.value == Player.O) {
-                    val aiMove = Computer(gridSize).findBestMove(_grid.value)
-                    playTurn(aiMove.first, aiMove.second)
+                    switchCurrentPlayer()
+                    if (gameMode == GameMode.AI && _currentPlayer.value == Player.O) {
+                        _onWorking.value = false
+                        val aiMove = Computer(gridSize).findBestMove(_grid.value)
+                        delay(500)
+                        playTurn(aiMove.first, aiMove.second)
+                    }
                 }
 
             }
@@ -93,13 +96,14 @@ class PlayViewModel : ViewModel() {
         return _grid.value[row!!][col!!].value == null
     }
 
-    fun setDialogue(status: DialogueState) {
+    fun setDialogue(status: PlayDialogueState) {
         _onWorking.value = false
         _dialogueStatus.value = status
-        if (status == DialogueState.OnDismiss) {
+        if (status == PlayDialogueState.onRestart) {
             startNewGame()
+        } else if (status == PlayDialogueState.onDismiss) {
+            _onWorking.value = true
         }
-        _onWorking.value = status == DialogueState.OnDismiss
     }
 
     private fun winningHandler(state: GameState, whoTurn: Player = Player.NULL) {
@@ -107,29 +111,38 @@ class PlayViewModel : ViewModel() {
             GameState.NONE -> {}
 
             GameState.OnWin -> {
-                setDialogue(DialogueState.OnShow)
+                setDialogue(PlayDialogueState.onGameEnd)
                 dataManagement.addHistory(
                     gameMode = getGameModeName(),
-                    winner = "Player $whoTurn Win",
+                    winner =
+                    if (gameMode == GameMode.AI)
+                        if (whoTurn == Player.O) {
+                            "Computer"
+                        } else {
+                            "Player"
+                        }
+                    else {
+                        "Player $whoTurn"
+                    } + " Win",
                     gridSize = gridSize.toLong(),
-                    end_time = "11"
+                    end_time = getCurrentTime()
                 )
                 lastGame.value = GameState.OnWin
                 lastWinner.value = whoTurn
-                _dialogueMessage.value = "Player $whoTurn Win"
+                _dialogueMessage.value = "Player $whoTurn takes the win!"
             }
 
             GameState.OnTie -> {
-                setDialogue(DialogueState.OnShow)
+                setDialogue(PlayDialogueState.onGameEnd)
                 dataManagement.addHistory(
                     gameMode = getGameModeName(),
                     winner = "TIE",
                     gridSize = gridSize.toLong(),
-                    end_time = "11"
+                    end_time = getCurrentTime()
                 )
                 lastGame.value = GameState.OnTie
                 lastWinner.value = whoTurn
-                _dialogueMessage.value = "This Game are tie"
+                _dialogueMessage.value = "It's a tie!"
 
             }
         }
@@ -142,7 +155,7 @@ class PlayViewModel : ViewModel() {
         }
     }
 
-    private fun startNewGame() {
+    fun startNewGame() {
 
         when (gameMode) {
             GameMode.PvP -> {
@@ -173,6 +186,11 @@ class PlayViewModel : ViewModel() {
             }
         }
 
+        _onWorking.value = true
+    }
+
+    fun onQuitClicked(status: PlayDialogueState) {
+        _dialogueStatus.value = status
     }
 
     fun onBackOrExit(navigator: Navigator) {

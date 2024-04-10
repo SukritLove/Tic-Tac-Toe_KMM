@@ -51,7 +51,7 @@ class HomeScreen() : Screen {
 
         val gridSize by viewModel.gridSize.collectAsState()
 
-        val checked = viewModel.gameMode.observeAsState().value
+        val checked = viewModel.isEnable.observeAsState().value
 
         val dialogueState = viewModel.dialogueState.observeAsState().value
 
@@ -82,7 +82,7 @@ class HomeScreen() : Screen {
                     CustomButton.iconButton(
                         btnText = ButtonType.Minus,
                         onButtonClick = { viewModel.decrementCount() },
-                        gameMode = checked
+                        isEnable = gridSize != 3 && checked
                     )
                     Spacer(Modifier.padding(20.dp))
                     Text("$gridSize x $gridSize", style = Typo().bodyLarge)
@@ -90,7 +90,7 @@ class HomeScreen() : Screen {
                     CustomButton.iconButton(
                         btnText = ButtonType.Plus,
                         onButtonClick = { viewModel.incrementCount() },
-                        gameMode = checked
+                        isEnable = gridSize != 8 && checked
                     )
                     Spacer(Modifier.weight(1f))
                 }

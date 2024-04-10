@@ -48,12 +48,51 @@ object CustomDialogueBox {
                     ) {
                         CustomButton.decisionButton(
                             btnText = ButtonType.Yes,
-                            onButtonClick = onConfirmClicked)
+                            onButtonClick = onConfirmClicked
+                        )
                         CustomButton.decisionButton(
                             btnText = ButtonType.No,
-                            onButtonClick = onDeclineClicked)
+                            onButtonClick = onDeclineClicked
+                        )
                     }
 
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun customDecisionPlayScreen(
+        onDismissRequest: () -> Unit,
+        dialogueMessage: String,
+        onConfirmClicked: () -> Unit,
+        onDeclineClicked: () -> Unit
+    ) {
+        Dialog(onDismissRequest = onDismissRequest) {
+            Box(
+                Modifier.size(width = 400.dp, height = 200.dp)
+                    .background(AppColor.background, shape = RoundedCornerShape(10.dp))
+            ) {
+                Column(
+                    Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceAround
+                ) {
+                    Text(dialogueMessage, style = Typo().titleSmall)
+                    Column(
+                        Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceAround
+                    ) {
+                        CustomButton.decisionButton(
+                            btnText = ButtonType.Restart,
+                            onButtonClick = onConfirmClicked
+                        )
+                        CustomButton.decisionButton(
+                            btnText = ButtonType.Quit,
+                            onButtonClick = onDeclineClicked
+                        )
+                    }
                 }
             }
         }

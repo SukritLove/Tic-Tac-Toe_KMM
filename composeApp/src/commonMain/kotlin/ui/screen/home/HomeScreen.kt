@@ -72,7 +72,7 @@ class HomeScreen() : Screen {
                 verticalArrangement = Arrangement.spacedBy(35.dp)
             )
             {
-                Text(text = "Select Board Size", style = Typo().bodyLarge)
+                Text(text = stringResource(Res.string.select_board_size), style = Typo().bodyLarge)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
@@ -112,13 +112,13 @@ class HomeScreen() : Screen {
                 verticalArrangement = Arrangement.spacedBy(35.dp)
             ) {
                 CustomButton.styledButton(
-                    btnText = "Play",
+                    btnText = stringResource(Res.string.play),
                     onButtonClick = { viewModel.onClickPlay(nav) })
                 CustomButton.styledButton(
-                    btnText = "History",
+                    btnText = stringResource(Res.string.history),
                     onButtonClick = { viewModel.onClickHistory(nav) })
                 CustomButton.styledButton(
-                    btnText = "Exit",
+                    btnText = stringResource(Res.string.exit),
                     onButtonClick = { viewModel.onExit(DialogueState.OnShow) })
             }
             if (dialogueState == DialogueState.OnShow) {
@@ -126,7 +126,7 @@ class HomeScreen() : Screen {
                     onDismissRequest = {
                         viewModel.onExit(DialogueState.OnDismiss)
                     },
-                    dialogueMessage = "Sure you want to quit?",
+                    dialogueMessage = stringResource(Res.string.exit_confirmation),
                     onConfirmClicked = { exitApplication() },
                     onDeclineClicked = { viewModel.onExit(DialogueState.OnDismiss) })
             }

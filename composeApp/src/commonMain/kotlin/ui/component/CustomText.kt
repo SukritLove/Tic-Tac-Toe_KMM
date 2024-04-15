@@ -8,6 +8,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.example.compose.AppColor
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import tic_tac_toe_kmm.composeapp.generated.resources.Res
 import ui.theme.Typo
@@ -40,9 +41,10 @@ object CustomText {
         )
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     fun historyTopBar() {
-        Text("History", style = Typo().titleLarge.copy(color = AppColor.light_sienna))
+        Text(stringResource(Res.string.history), style = Typo().titleLarge.copy(color = AppColor.light_sienna))
     }
 
 }

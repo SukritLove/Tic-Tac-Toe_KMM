@@ -90,7 +90,7 @@ class PlayScreen(navigator: Navigator) : Screen {
                             PlayDialogueState.onDismiss
                         )
                     },
-                        dialogueMessage = "Leave the game?",
+                        dialogueMessage = stringResource(Res.string.quit_confirmation),
                         onConfirmClicked = {
                             viewModel.onBackOrExit(nav)
                         },
@@ -104,13 +104,17 @@ class PlayScreen(navigator: Navigator) : Screen {
                     if (viewModel.gameMode == GameMode.AI &&
                         currentPlayer.value == Player.O
                     ) {
-                        "Computer"
+                        stringResource(Res.string.computer)
                     } else {
-                        "Player ${currentPlayer.value.name}"
+                        if (currentPlayer.value.name.lowercase() == "x") {
+                            stringResource(Res.string.player_x)
+                        } else {
+                            stringResource(Res.string.player_o)
+                        }
                     }, style = Typo().titleMedium
                 )
                 CustomButton.styledButton(
-                    btnText = "Quit",
+                    btnText = stringResource(Res.string.quit),
                     onButtonClick = { viewModel.onQuitClicked(PlayDialogueState.onQuitShow) })
             }
         }

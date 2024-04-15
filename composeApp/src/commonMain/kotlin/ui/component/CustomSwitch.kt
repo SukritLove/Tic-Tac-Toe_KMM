@@ -7,9 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import com.example.compose.AppColor
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tic_tac_toe_kmm.composeapp.generated.resources.Res
 import ui.model.GameMode
 import ui.theme.Typo
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun GameModeSwitch(checked: Boolean, onCheckChange: (Boolean) -> Unit) {
     Switch(
@@ -18,11 +22,13 @@ fun GameModeSwitch(checked: Boolean, onCheckChange: (Boolean) -> Unit) {
         onCheckedChange = onCheckChange,
         thumbContent = {
             Text(
-                if (checked) {
-                    "PvP"
-                } else {
-                    "AI"
-                },
+                stringResource(
+                    if (checked) {
+                        Res.string.pvp
+                    } else {
+                        Res.string.ai
+                    }
+                ),
                 style = Typo().bodySmall
             )
         },

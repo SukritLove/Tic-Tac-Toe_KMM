@@ -33,7 +33,10 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import com.example.compose.AppColor
 import dev.icerock.moko.mvvm.livedata.compose.observeAsState
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import shared.common.exitApplication
+import tic_tac_toe_kmm.composeapp.generated.resources.Res
 import ui.component.CustomButton
 import ui.component.CustomDialogueBox
 import ui.component.CustomText
@@ -46,6 +49,7 @@ class HistoryScreen(navigator: Navigator) : Screen {
     private val viewModel = HistoryViewModel()
     private val nav = navigator
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun Content() {
         val history = viewModel.showHistory.observeAsState()
@@ -94,19 +98,19 @@ class HistoryScreen(navigator: Navigator) : Screen {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Winner",
+                            text = stringResource(Res.string.winner),
                             style = Typo().bodyMedium.copy(AppColor.sienna),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.weight(1.5f)
                         )
                         Text(
-                            text = "Board",
+                            text = stringResource(Res.string.board),
                             style = Typo().bodyMedium.copy(AppColor.sienna),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.weight(1f)
                         )
                         Text(
-                            text = "End Time",
+                            text = stringResource(Res.string.end_time),
                             style = Typo().bodyMedium.copy(AppColor.sienna),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.weight(1f)
@@ -153,7 +157,7 @@ class HistoryScreen(navigator: Navigator) : Screen {
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "-No Data-",
+                                    text = stringResource(Res.string.no_data),
                                     style = Typo().titleMedium,
                                     modifier = Modifier.fillMaxWidth(),
                                     textAlign = TextAlign.Center
@@ -166,7 +170,7 @@ class HistoryScreen(navigator: Navigator) : Screen {
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "-Loading-",
+                                text = stringResource(Res.string.loading),
                                 style = Typo().titleMedium,
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center
@@ -178,11 +182,11 @@ class HistoryScreen(navigator: Navigator) : Screen {
 
             CustomButton.styledButton(
                 modifier = Modifier.width(250.dp),
-                btnText = "Clear History",
+                btnText = stringResource(Res.string.clear_history),
                 onButtonClick = { viewModel.setDialogue(DialogueState.OnShow) })
 
             CustomButton.styledButton(
-                btnText = "Back",
+                btnText = stringResource(Res.string.back),
                 onButtonClick = { viewModel.onBackClicked(nav) })
         }
         if (dialogueState == DialogueState.OnShow) {
@@ -190,7 +194,7 @@ class HistoryScreen(navigator: Navigator) : Screen {
                 onDismissRequest = {
                     viewModel.setDialogue(DialogueState.OnDismiss)
                 },
-                dialogueMessage = "Wipe your history clean?",
+                dialogueMessage = stringResource(Res.string.clear_history_confirmation),
                 onConfirmClicked = { viewModel.clearHistory() },
                 onDeclineClicked = { viewModel.setDialogue(DialogueState.OnDismiss) })
         }

@@ -20,6 +20,7 @@ import cafe.adriel.voyager.navigator.NavigatorContent
 import shared.common.exitApplication
 import shared.data.DataSourceModule
 import ui.screen.home.HomeScreen
+import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
 
         println(ContentView())
         if (backPressedTime + backPressThreshold > System.currentTimeMillis()) {
-            finish()
+            exitProcess(-1)
             super.onBackPressed()
         } else {
             Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show()

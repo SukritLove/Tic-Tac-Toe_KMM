@@ -18,6 +18,7 @@ class HistoryViewModel : ViewModel() {
     private val dataManagement = DatabaseManagement()
 
     private val _history = MutableLiveData<List<HistoryData>>(emptyList())
+    val actualHistory: LiveData<List<HistoryData>> = _history
 
     private val _showHistory = MutableLiveData<List<HistoryData>>(emptyList())
     val showHistory: LiveData<List<HistoryData>> = _showHistory

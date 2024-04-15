@@ -81,14 +81,20 @@ object CustomButton {
     }
 
     @Composable
-    fun styledButton(modifier: Modifier = Modifier, btnText: String, onButtonClick: () -> Unit) {
+    fun styledButton(
+        modifier: Modifier = Modifier,
+        btnText: String,
+        onButtonClick: () -> Unit,
+        isEnable: Boolean = true
+    ) {
         ElevatedButton(
             onClick = onButtonClick,
             modifier = modifier.size(width = 200.dp, height = 50.dp),
             shape = RoundedCornerShape(10.dp),
+            enabled = isEnable,
             colors = ButtonDefaults.buttonColors(
                 containerColor = AppColor.pinkish_gray,
-                contentColor = AppColor.light_sienna
+                contentColor = AppColor.light_sienna,
             )
         ) {
             Text(btnText, style = Typo().titleMedium)

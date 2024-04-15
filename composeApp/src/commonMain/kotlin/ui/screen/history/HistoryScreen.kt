@@ -53,6 +53,7 @@ class HistoryScreen(navigator: Navigator) : Screen {
     @Composable
     override fun Content() {
         val history = viewModel.showHistory.observeAsState()
+        val actualHistory = viewModel.actualHistory.observeAsState()
         val filter = viewModel.filterType.observeAsState()
         val isLoading = viewModel.isLoading.observeAsState().value
         val dialogueState = viewModel.dialogueState.observeAsState().value
@@ -183,7 +184,8 @@ class HistoryScreen(navigator: Navigator) : Screen {
             CustomButton.styledButton(
                 modifier = Modifier.width(250.dp),
                 btnText = stringResource(Res.string.clear_history),
-                onButtonClick = { viewModel.setDialogue(DialogueState.OnShow) })
+                onButtonClick = { viewModel.setDialogue(DialogueState.OnShow) },
+                isEnable = actualHistory.value.isNotEmpty())
 
             CustomButton.styledButton(
                 btnText = stringResource(Res.string.back),
